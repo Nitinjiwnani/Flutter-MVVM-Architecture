@@ -6,6 +6,8 @@ import 'package:flutter_mvvm_architecture/res/components/round_button.dart';
 import 'package:flutter_mvvm_architecture/utils/routes/routes_name.dart';
 import 'package:flutter_mvvm_architecture/utils/utils.dart';
 import 'package:flutter_mvvm_architecture/view/home_screen.dart';
+import 'package:flutter_mvvm_architecture/view_model/auth_view_model.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -35,6 +37,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final authViewMode = Provider.of<AuthViewModel>(context);
     final height = MediaQuery.of(context).size.height * 1;
     return Scaffold(
         appBar: AppBar(
@@ -89,6 +92,7 @@ class _LoginViewState extends State<LoginView> {
               ),
               RoundButton(
                 title: 'Login',
+                loading: authViewMode.loading,
                 onPress: () {
                   if (_emailController.text.isEmpty) {
                     Utils.snackBar('Please enter email', context);
@@ -99,6 +103,11 @@ class _LoginViewState extends State<LoginView> {
                     Utils.flushBarErrorMessage(
                         'Please enter 6 digit password', context);
                   } else {
+                    Map data = {
+                      'email': _emailController.text.toString(),
+                      'password': _passwordController.text.toString()
+                    };
+                    authViewMode.loginApi(data, context);
                     print('API hit');
                   }
                 },
